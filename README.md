@@ -10,17 +10,18 @@ The system is built with a backend-first approach and is being expanded graduall
 - Accept a long URL and generate a shortened version
 - Ensure uniqueness of generated short URLs
 - Optional validation of input URL format
+- Apply a default expiration to newly created URLs
 - Provide a REST endpoint for URL creation
 
 ### URL Redirection (Current)
 - Redirect shortened URLs to the original destination
-- Return appropriate responses for invalid short codes
+- Return **410 Gone** for expired short URLs
+- Return **404 Not Found** for invalid short codes
 
 ### Planned Enhancements
 These features are part of the system design and will be implemented as the project evolves:
 
 #### Expiration & Privacy Controls
-- Apply default expiration for guest-created URLs
 - Support private URLs accessible only to their creators
 - Allow authenticated users to specify custom expiration
 
@@ -43,7 +44,9 @@ Current backend concerns:
 - Predictable redirect handling
 
 ### Database Schema (Current)
+
 Schema is versioned via Flyway migrations.
+
 
 ```
 short_urls
@@ -51,10 +54,12 @@ short_urls
 ├── short_code VARCHAR(20) UNIQUE NOT NULL
 ├── original_url TEXT NOT NULL
 └── created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+└── expires_at TIMESTAMP NULL
 ```
 
 
-Schema will evolve as new features are added (e.g., expiration, privacy, click tracking).
+
+Schema will evolve as new features are added (e.g., privacy, click tracking).
 
 ### Tech Stack
 - Java 21
@@ -67,16 +72,20 @@ Schema will evolve as new features are added (e.g., expiration, privacy, click t
 
 ## API Endpoints (Current)
 
-**Create Short URL**
+**Create Short URL**  
 POST /shorten?url=<long-url>
 
-
-**Redirect Short URL**
+**Redirect Short URL**  
 GET /{shortCode}
+
+Response semantics:
+- 302 → redirect to target
+- 410 → expired URL
+- 404 → unknown short code
 
 ## Development Approach
 The service is being developed incrementally with a focus on backend behavior first.  
-Core URL shortening and persistence were prioritized initially; additional features such as expiration, privacy, analytics, and authentication will be layered in without breaking existing functionality or schema.
+Core URL shortening, persistence, and expiration handling were prioritized initially; additional features such as privacy, analytics, and authentication will be layered in without breaking existing functionality or schema.
 
 ## Status
 Active development. Functional portions and documentation will continue to be updated as the system evolves.

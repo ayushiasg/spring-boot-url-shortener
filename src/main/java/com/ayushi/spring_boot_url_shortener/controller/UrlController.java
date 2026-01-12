@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 public class UrlController {
@@ -28,13 +29,20 @@ public class UrlController {
     public void redirect(@PathVariable String shortCode, HttpServletResponse response)
             throws IOException {
 
-        String originalUrl = service.getOriginalUrl(shortCode);
+        ShortUrl shortUrl = service.find(shortCode);
 
-        if (originalUrl == null) {
+        if (shortUrl == null) {
             response.sendError(HttpStatus.NOT_FOUND.value(), "Short URL not found");
             return;
         }
 
-        response.sendRedirect(originalUrl);
+        if (shortUrl.getExpiresAt() != null &&
+                shortUrl.getExpiresAt().isBefore(LocalDateTime.now())) {
+            response.sendError(HttpStatus.GONE.value(), "Short URL expired");
+            return;
+        }
+
+        response.sendRedirect(shortUrl.getOriginalUrl());
     }
 }
+

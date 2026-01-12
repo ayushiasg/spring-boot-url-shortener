@@ -21,10 +21,19 @@ public class ShortUrl {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
+
     protected ShortUrl() {}
     public ShortUrl(String shortCode, String originalUrl) {
         this.shortCode = shortCode;
         this.originalUrl = originalUrl;
+    }
+
+    public ShortUrl(String shortCode, String originalUrl, LocalDateTime expiresAt) {
+        this.shortCode = shortCode;
+        this.originalUrl = originalUrl;
+        this.expiresAt = expiresAt;
     }
 
     public String getShortCode() {
@@ -34,4 +43,13 @@ public class ShortUrl {
     public String getOriginalUrl() {
         return originalUrl;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
 }
