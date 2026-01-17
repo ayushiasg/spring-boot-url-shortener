@@ -1,12 +1,15 @@
 package com.ayushi.spring_boot_url_shortener.controller;
 
 import com.ayushi.spring_boot_url_shortener.model.ShortUrl;
+import com.ayushi.spring_boot_url_shortener.model.User;
+import com.ayushi.spring_boot_url_shortener.service.AuthService;
 import com.ayushi.spring_boot_url_shortener.service.UrlShorteningService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -14,20 +17,25 @@ import java.time.LocalDateTime;
 public class UrlController {
 
     private final UrlShorteningService service;
+    private final AuthService authService;
 
-    public UrlController(UrlShorteningService service) {
+    public UrlController(UrlShorteningService service,
+                         AuthService authService) {
         this.service = service;
+        this.authService = authService;
     }
 
     @PostMapping("/shorten")
     public ResponseEntity<ShortUrl> shorten(@RequestParam String url) {
-        ShortUrl shortUrl = service.shortenUrl(url);
+        User current = authService.currentUser();
+        ShortUrl shortUrl = service.shortenUrl(url, current);
         return ResponseEntity.status(HttpStatus.CREATED).body(shortUrl);
     }
 
+
     @GetMapping("/{shortCode}")
-    public void redirect(@PathVariable String shortCode, HttpServletResponse response)
-            throws IOException {
+    public void redirect(@PathVariable String shortCode,
+                         HttpServletResponse response) throws IOException {
 
         ShortUrl shortUrl = service.find(shortCode);
 
@@ -44,5 +52,10 @@ public class UrlController {
 
         response.sendRedirect(shortUrl.getOriginalUrl());
     }
-}
 
+    @GetMapping("/me")
+    public ResponseEntity<?> me(Authentication auth) {
+        if (auth == null) return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(auth.getName());
+    }
+}

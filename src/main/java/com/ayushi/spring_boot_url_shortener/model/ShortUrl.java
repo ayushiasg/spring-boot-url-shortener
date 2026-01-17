@@ -24,16 +24,21 @@ public class ShortUrl {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
+
     protected ShortUrl() {}
     public ShortUrl(String shortCode, String originalUrl) {
         this.shortCode = shortCode;
         this.originalUrl = originalUrl;
     }
 
-    public ShortUrl(String shortCode, String originalUrl, LocalDateTime expiresAt) {
+    public ShortUrl(String shortCode, String originalUrl, LocalDateTime expiresAt,User createdB) {
         this.shortCode = shortCode;
         this.originalUrl = originalUrl;
         this.expiresAt = expiresAt;
+        this.createdBy = createdBy;
     }
 
     public String getShortCode() {
@@ -51,5 +56,10 @@ public class ShortUrl {
     public LocalDateTime getExpiresAt() {
         return expiresAt;
     }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
 
 }

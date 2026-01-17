@@ -22,9 +22,10 @@ The system is built with a backend-first approach and is being expanded graduall
 ### User Registration & Authentication (Current)
 - Users can register via a REST endpoint
 - Passwords are stored securely using BCrypt hashing
-- Login is handled via Spring Security's default form login
-- Authentication is session-based
-- Only authenticated users can create shortened URLs
+- Authentication is handled via HTTP Basic
+- Session-based login works via `curl` and browser
+- `/me` endpoint returns the authenticated username
+- Ownership is stored for later privacy features
 
 ### Planned Enhancements
 These features are part of the system design and will be implemented as the project evolves:
@@ -47,6 +48,7 @@ Current backend concerns:
 - Authentication and password handling
 - Explicit schema evolution
 - Predictable redirect handling
+- Ownership association between users and URLs
 
 ### Database Schema (Current)
 
