@@ -1,4 +1,3 @@
 package com.ayushi.spring_boot_url_shortener.dto;
 
-public record RegisterRequest() {
-}
+public record RegisterRequest(String username, String password) {}
