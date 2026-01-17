@@ -7,9 +7,7 @@
     import org.springframework.stereotype.Service;
 
     import java.time.LocalDateTime;
-    import java.util.Map;
     import java.util.UUID;
-    import java.util.concurrent.ConcurrentHashMap;
 
     @Service
     public class UrlShorteningService {
@@ -26,11 +24,17 @@
             this.authService = authService;
         }
 
-        public ShortUrl shortenUrl(String originalUrl, User creator) {
+        public ShortUrl shortenUrl(String originalUrl, User user) {
             String shortCode = generateShortCode();
             LocalDateTime expiresAt = LocalDateTime.now().plusDays(defaultExpiryInDays);
 
-            ShortUrl shortUrl = new ShortUrl(shortCode, originalUrl, expiresAt, creator);
+            ShortUrl shortUrl = new ShortUrl(
+                    shortCode,
+                    originalUrl,
+                    expiresAt,
+                    user
+            );
+
             return repository.save(shortUrl);
         }
 

@@ -34,7 +34,7 @@ public class ShortUrl {
         this.originalUrl = originalUrl;
     }
 
-    public ShortUrl(String shortCode, String originalUrl, LocalDateTime expiresAt,User createdB) {
+    public ShortUrl(String shortCode, String originalUrl, LocalDateTime expiresAt,User createdBy) {
         this.shortCode = shortCode;
         this.originalUrl = originalUrl;
         this.expiresAt = expiresAt;

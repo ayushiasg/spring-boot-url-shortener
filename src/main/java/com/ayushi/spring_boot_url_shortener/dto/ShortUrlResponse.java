@@ -8,14 +8,16 @@ public record ShortUrlResponse(
         String shortCode,
         String originalUrl,
         LocalDateTime expiresAt,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String createdBy
 ) {
     public static ShortUrlResponse from(ShortUrl e) {
         return new ShortUrlResponse(
                 e.getShortCode(),
                 e.getOriginalUrl(),
                 e.getExpiresAt(),
-                e.getCreatedAt()
+                e.getCreatedAt(),
+                e.getCreatedBy().getUsername()
         );
     }
 }
